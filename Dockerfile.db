@@ -8,7 +8,7 @@ ENV POSTGRES_DB=student_db
 
 COPY database.py .
 COPY models.py .
-
+COPY .env ./
 
 
 
