@@ -1,0 +1,73 @@
+name: CI CD Pipeline Integration
+
+on:
+  push:
+    branches: 
+    - main 
+  
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    env:
+      CI: "true"
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      DB_HOST: ${{ secrets.DB_HOST }}
+      DB_PORT: ${{ secrets.DB_PORT }}
+      DB_NAME: ${{ secrets.DB_NAME }}
+
+    steps:
+      - name: Check repository
+        uses: actions/checkout@v4
+
+      - name: python setup
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install fastapi sqlalchemy psycopg2-binary python-dotenv uvicorn
+
+
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+     
+      - name: Build backend image
+        run: |
+          docker build -f Dockerfile.backend -t ${{ secrets.DOCKERHUB_USERNAME }}/student_backend:latest .
+        
+      - name: Build database image
+        run: |
+          docker build -f Dockerfile.db -t ${{ secrets.DOCKERHUB_USERNAME }}/student_database:latest .
+          
+      - name: Push Docker_backend image
+        run: |
+           docker push ${{ secrets.DOCKERHUB_USERNAME }}/student_backend:latest
+
+      - name: Push Docker_database image
+        run: |
+           docker push ${{ secrets.DOCKERHUB_USERNAME }}/student_database:latest
+
+      - name: Deploy application
+        run: |
+           docker pull ${{ secrets.DOCKERHUB_USERNAME }}/student_backend:latest
+           docker pull ${{ secrets.DOCKERHUB_USERNAME }}/student_database:latest
+           
+
+      - name: Run docker application
+        run: |
+          docker compose up -d --build
+    
+ 
+        
+    
