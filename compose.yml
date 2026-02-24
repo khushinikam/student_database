@@ -1,6 +1,6 @@
 services:
   db:
-   container_name: database_container
+   container_name: studentdb
    build:
       context: .
       dockerfile: Dockerfile.db
