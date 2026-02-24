@@ -31,6 +31,8 @@ def signup(student: schemas.createStudent, db: Session = Depends(get_db)):
 
 def login(student: schemas.studentLogin, db: Session = Depends(get_db)):
     db_user = db.query(models.Student).filter(models.Student.student_email == student.student_email).first()
+    # SELECT * FROM Student WHERE student_email = 'provided_email' LIMIT 1;
+
 
     if not db_user or not auth.verify_password(student.student_password, db_user.student_password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
