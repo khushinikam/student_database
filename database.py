@@ -24,7 +24,7 @@ try:
 
 
 except Exception as e:
-    print("connection failed")
+    print(f"connection failed,{e}")
 
 
 sessionLocal = sessionmaker(
