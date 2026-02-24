@@ -64,9 +64,9 @@ jobs:
            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/student_database:latest
            
 
-      - name: Run docker application
-        run: |
-          docker compose up -d --build
+      # - name: Run docker application
+      #   run: |
+      #     docker compose up -d --build
     
  
         
