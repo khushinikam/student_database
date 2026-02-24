@@ -1,0 +1,15 @@
+FROM postgres:15
+
+ENV POSTGRES_USER=postgres
+ENV POSTGRES_PASSWORD=root
+ENV POSTGRES_DB=student_db
+
+
+
+COPY database.py .
+COPY models.py .
+COPY .env ./
+
+
+
+EXPOSE 5432
